@@ -2596,21 +2596,24 @@ Function_1020: ; 0x1020
 	ld a, [$ca00]
 	ld d, a
 	ld a, [hli]
+
 	push hl
 	cp d
 	jr z, .asm_104f
 	call Function_62b.asm_649
-
 .asm_104f
 	pop hl
+
 	ld a, [$c4e0]
 	ld [$ff86], a
 	ld [$2666], a
-	call $1093
+	call Function_1093
+
 	ld a, [$c4e0]
 	ld [$ff86], a
 	ld [$2666], a
-	call $111f
+	call Function_111f
+
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
@@ -2637,7 +2640,7 @@ Function_1020: ; 0x1020
 	ld [$c780], a
 	ld a, h
 	ld [$c781], a
-	call $113c
+	call Function_113c
 	call Function_623
 	ret
 ; 0x1093
@@ -2797,11 +2800,11 @@ Function_113c: ; 0x113c
 	ld a, [hl]
 	ld [$da03], a
 	ld [$da07], a
-	ld a, $10
+	ld a, Bank(Data104000)
 	ld [$ff86], a
 	ld [$2666], a
 	ld d, $0
-	ld hl, Data24000
+	ld hl, Data104000
 	add hl, de
 	ld b, [hl]
 	sla e
@@ -3330,7 +3333,7 @@ Function_149b: ; 0x149b
 
 .asm_14d8
 	call Function_312
-	call $113c
+	call Function_113c
 	call Function_3e5
 	call Function_ca0
 	call Function_6a3
@@ -4322,6 +4325,7 @@ Function_1a6b: ; 0x1a6b
 	ld a, [de]
 	cp $ff
 	jp z, $1b70
+
 	push bc
 	push de
 	push hl
@@ -4332,11 +4336,12 @@ Function_1a6b: ; 0x1a6b
 	pop hl
 	pop de
 	pop bc
+
 	ld d, a
-	ld a, $10
+	ld a, Bank(Data104000)
 	ld [$ff86], a
 	ld [$2666], a
-	ld hl, Data24000
+	ld hl, Data104000
 	ld a, d
 	add l
 	ld l, a
@@ -4500,7 +4505,7 @@ Function_1b76: ; 0x1b76
 
 .asm_1ba9
 	ld bc, $0010
-	ld hl, $d009
+	ld hl, wd009
 .asm_1baf
 	ld a, [hl]
 	cp d
@@ -4745,6 +4750,7 @@ Function_1ceb: ; 0x1ceb
 	ld a, [rWY]
 	cp $70
 	ret z
+
 	sub $4
 	ld [rWY], a
 	jr .asm_1ceb
@@ -4951,7 +4957,7 @@ Function_1db1: ; 0x1db1
 	ld a, l
 	ld [wd003], a
 	ld a, h
-	ld [wd004_OpponentSpeciesID], a
+	ld [wd004_EncounterID], a
 	ld [$c359], a
 	ld a, [$cf00]
 	ld [$d001], a
@@ -4962,11 +4968,11 @@ Function_1db1: ; 0x1db1
 	ld a, $d
 	ld [$cf00], a
 	xor a
-	ld [$d008], a
-	ld [$d009], a
+	ld [wd008], a
+	ld [wd009], a
 	ld [wd005], a
 	ld [wd017], a
-	ld [$d018], a
+	ld [wd018], a
 	ld [wd014], a
 	ld a, $78
 	ld [$d006], a
@@ -5011,7 +5017,7 @@ Function_1db1: ; 0x1db1
 	ld a, $6
 	ld [rSVBK], a
 	ld a, $1
-	ld [$d018], a
+	ld [wd018], a
 	ld a, $2
 	ld [$ff86], a
 	ld [$2666], a
@@ -5072,18 +5078,18 @@ Function_1f42: ; 0x1f42
 
 Function_1f61: ; 0x1f61
 	call Function_2d28
-	ld a, [$d018]
+	ld a, [wd018]
 	and a
 	jr z, .asm_1f71
 	xor a
-	ld [$d018], a
+	ld [wd018], a
 	call Function_6af
 
 .asm_1f71
-	ld a, [$d008]
+	ld a, [wd008]
 	add $30
 	ld [rSCY], a
-	ld a, [$d009]
+	ld a, [wd009]
 	add $10
 	ld [rSCX], a
 	ld a, [wd005]
@@ -5254,7 +5260,7 @@ Function_201c: ; 0x201c
 	ld [$9947], a
 	ld [$9d47], a
 	ld [$9a31], a
-	ld a, [wd101]
+	ld a, [wOpponentHealth]
 	call Function_2c6b
 	ld a, b
 	add $30
@@ -5268,7 +5274,7 @@ Function_201c: ; 0x201c
 	add $30
 	ld [$994a], a
 	ld [$9d4a], a
-	ld a, [wd111]
+	ld a, [wPlayerHealth]
 	call Function_2c6b
 	ld a, b
 	add $30
@@ -5586,13 +5592,13 @@ Function_2301_InitBattleData: ; 0x2301
 	ld a, [wd013]
 	and a
 	jr nz, .asm_2356
-	ld a, [wd004_OpponentSpeciesID]
+	ld a, [wd004_EncounterID]
 	ld c, a
 	ld b, $0
 	call Function_11a4_GetEncounterDataPointer
-	ld bc, wd100
+	ld bc, wOpponentSpecies
 	call Function_238b_LoadEncounterData
-	ld a, [wd004_OpponentSpeciesID]
+	ld a, [wd004_EncounterID]
 	ld c, a
 	ld b, $0
 	call Function_11a4_GetEncounterDataPointer
@@ -5603,34 +5609,34 @@ Function_2301_InitBattleData: ; 0x2301
 	ld de, $d080
 	call Function_11bd
 
-	ld a, [wd101]
-	ld [wOpponentHealth], a
+	ld a, [wOpponentHealth]
+	ld [wTempOpponentHealth], a
 
 	ld a, [wd003]
 	and a
 	jr nz, .asm_2342
-	ld a, [wd102]
+	ld a, [wOpponentStrength]
 	cp $3c
 	jr c, .asm_2342
 	sub $1e
-	ld [wd102], a
+	ld [wOpponentStrength], a
 
 .asm_2342
 	xor a
 	ld [wd00d], a
 	ld [wd00c], a
-	ld a, [wd100]
+	ld a, [wOpponentSpecies]
 	cp $5c
 	jr nz, .asm_2356
 	ld a, [wd01c]
-	ld [wd100], a
+	ld [wOpponentSpecies], a
 
 .asm_2356
 	ld a, [$c350]
 	ld c, a
 	ld b, $0
 	call Function_11a4_GetEncounterDataPointer
-	ld bc, $d110
+	ld bc, wPlayerSpecies
 	call Function_238b_LoadEncounterData
 	call Function_23aa_LoadAllMoveData
 
@@ -5639,15 +5645,15 @@ Function_2301_InitBattleData: ; 0x2301
 	call Function_3e6b
 	inc l
 	ld a, [hli]
-	ld [wPlayerHealth], a
+	ld [wTempPlayerHealth], a
 
 	ld a, [hli]
-	ld [wd111], a
+	ld [wPlayerHealth], a
 	ld a, [hl]
-	ld [wd112], a
-	ld a, [wd113EffectiveValue]
+	ld [wPlayerStrength], a
+	ld a, [wPlayerEffectiveValue]
 	ld [wd00fEffectiveValue], a
-	ld a, [wd103]
+	ld a, [wOpponentEffectiveValue]
 	ld [wd00eEffectiveValue], a
 	ret
 ; 0x238b
@@ -5688,29 +5694,31 @@ Function_238b_LoadEncounterData: ; 0x238b
 
 Function_23aa_LoadAllMoveData: ; 0x23aa
 	ld de, wMoveData0
-	ld a, [wMove0ID]
+	ld a, [wOpponentMove0ID]
 	call Function_23f3_CopyMoveData
 	ld de, $d130
-	ld a, [$d105]
+	ld a, [wOpponentMove1ID]
 	call Function_23f3_CopyMoveData
 	ld de, $d140
-	ld a, [$d106]
+	ld a, [wOpponentMove2ID]
 	call Function_23f3_CopyMoveData
 	ld de, $d150
-	ld a, [$d107]
+	ld a, [wOpponentMove3ID]
 	call Function_23f3_CopyMoveData
+
 	ld de, $d160
-	ld a, [wd114EffectiveValue]
+	ld a, [wPlayerMove0ID]
 	call Function_23f3_CopyMoveData
 	ld de, $d170
-	ld a, [$d115]
+	ld a, [wPlayerMove1ID]
 	call Function_23f3_CopyMoveData
 	ld de, $d180
-	ld a, [$d116]
+	ld a, [wPlayerMove2ID]
 	call Function_23f3_CopyMoveData
 	ld de, $d190
-	ld a, [$d117]
+	ld a, [wPlayerMove3ID]
 	call Function_23f3_CopyMoveData
+
 	ret
 ; 0x23f3
 
@@ -5814,7 +5822,7 @@ Function_245b: ; 0x245b
 	jr nz, .asm_2468
 
 .asm_2471
-	ld a, [$d108]
+	ld a, [wd108]
 	ld c, a
 	ld hl, $fe03
 .asm_2478
@@ -5826,7 +5834,7 @@ Function_245b: ; 0x245b
 	ld l, a
 	cp $20
 	jr c, .asm_2478
-	ld a, [$d118]
+	ld a, [wd118]
 	ld c, a
 .asm_2487
 	ld a, [hl]
@@ -5844,18 +5852,18 @@ Function_245b: ; 0x245b
 Function_2493: ; 0x2493
 	xor a
 	ld [rVBK], a
-	ld a, [wOpponentHealth]
+	ld a, [wTempOpponentHealth]
 	ld b, a
-	ld a, [wd101]
+	ld a, [wOpponentHealth]
 	ld c, a
 	call Function_3e0f
 	ld bc, $9700
 	ld e, $34
 	ld d, $87
 	call Function_673
-	ld a, [wPlayerHealth]
+	ld a, [wTempPlayerHealth]
 	ld b, a
-	ld a, [wd111]
+	ld a, [wPlayerHealth]
 	ld c, a
 	call Function_3e0f
 	ld bc, $9780
@@ -5867,9 +5875,9 @@ Function_2493: ; 0x2493
 
 
 Function_24c1: ; 0x24c1
-	ld a, [wOpponentHealth]
+	ld a, [wTempOpponentHealth]
 	ld b, a
-	ld a, [wd101]
+	ld a, [wOpponentHealth]
 	ld c, a
 	call Function_3e0f
 	ld bc, $9700
@@ -5877,9 +5885,9 @@ Function_24c1: ; 0x24c1
 	ld d, $8
 	ld a, $34
 	call Function_66e
-	ld a, [wPlayerHealth]
+	ld a, [wTempPlayerHealth]
 	ld b, a
-	ld a, [wd111]
+	ld a, [wPlayerHealth]
 	ld c, a
 	call Function_3e0f
 	ld bc, $9780
@@ -5895,9 +5903,10 @@ Function_24f0: ; 0x24f0
 	ld a, [wd013]
 	and a
 	ret nz
-	ld a, [wd102]
+
+	ld a, [wOpponentStrength]
 	ld c, a
-	ld a, [wd112]
+	ld a, [wPlayerStrength]
 	cp c
 	jr nc, .asm_2509
 	xor a
@@ -5937,9 +5946,9 @@ Function_2514_DealDamage: ; 0x2514
 	ld a, [wd017]
 	and a
 	jr nz, .asm_2550
-	ld a, [wPlayerHealth]
+	ld a, [wTempPlayerHealth]
 	ld c, a
-	ld a, [wd111]
+	ld a, [wPlayerHealth]
 	srl a
 	srl a
 	cp c
@@ -6028,14 +6037,14 @@ Function_2514_DealDamage: ; 0x2514
 	cp $ff
 	jr nz, .asm_25dd
 	ld c, $3
-	ld a, [$d117]
+	ld a, [wPlayerMove3ID]
 	cp $ff
 	jr nz, .asm_2611
 	dec c
-	ld a, [$d116]
+	ld a, [wPlayerMove2ID]
 	cp $ff
 	jr nz, .asm_2611
-	ld a, [$d115]
+	ld a, [wPlayerMove1ID]
 	cp $ff
 	jr nz, .asm_2611
 	dec c
@@ -6053,7 +6062,7 @@ Function_2514_DealDamage: ; 0x2514
 	cp $4
 	jr z, .asm_2630
 	ld [wd012_SelectedMoveNr], a
-	ld de, wd114EffectiveValue
+	ld de, wPlayerMove0ID
 	add e
 	ld e, a
 	ld a, [de]
@@ -6079,7 +6088,7 @@ Function_2514_DealDamage: ; 0x2514
 	jr z, .asm_25dd
 	ld a, [wd012_SelectedMoveNr]
 	ld [wd014], a
-	ld hl, wd114EffectiveValue
+	ld hl, wPlayerMove0ID
 	ld a, [wd012_SelectedMoveNr]
 	add l
 	ld l, a
@@ -6103,9 +6112,9 @@ Function_2514_DealDamage: ; 0x2514
 	ld a, l
 	and $f0
 	ld l, a
-	ld a, [wd112]
+	ld a, [wPlayerStrength]
 	ld e, a
-	ld a, [wd102]
+	ld a, [wOpponentStrength]
 	ld d, a
 	call Function_2809_TestAccuracy
 	and a
@@ -6161,13 +6170,13 @@ Function_2514_DealDamage: ; 0x2514
 	ld [wSuperEffectiveFlag], a
 .asm_26d7
 
-	ld a, [wOpponentHealth]
+	ld a, [wTempOpponentHealth]
 	cp c
 	jr z, .asm_26f2
 	cp c
 	jr c, .asm_26f2
 	sub c
-	ld [wOpponentHealth], a
+	ld [wTempOpponentHealth], a
 	ld a, $7
 	call Function_2870
 	ld a, [wd011]
@@ -6189,23 +6198,23 @@ Function_26fd: ; 0x26fd
 	ld [wd005], a
 	ld a, $4
 	call Function_2870
-	ld a, [wPlayerHealth]
+	ld a, [wTempPlayerHealth]
 	srl a
 	srl a
 	ld c, a
-	ld a, [wd111]
+	ld a, [wPlayerHealth]
 	cp c
 	jr c, .asm_2740
 	call Function_2b5
 	ld a, [wcf0b]
 	ld c, a
-	ld a, [wd112]
+	ld a, [wPlayerStrength]
 	add c
 	ld c, a
 	ld a, $0
 	adc $0
 	ld b, a
-	ld a, [wd102]
+	ld a, [wOpponentStrength]
 	cpl
 	ld l, a
 	ld h, $ff
@@ -6253,7 +6262,7 @@ Function_2759_DamageToPlayer: ; 0x2759
 	ld a, [wcf0b]
 	and $3
 	ld c, a
-	ld de, wd100
+	ld de, wOpponentSpecies
 	add e
 	ld e, a
 	ld a, [de]
@@ -6279,9 +6288,9 @@ Function_2759_DamageToPlayer: ; 0x2759
 	ld a, l
 	and $f0
 	ld l, a
-	ld a, [wd102]
+	ld a, [wOpponentStrength]
 	ld e, a
-	ld a, [wd112]
+	ld a, [wPlayerStrength]
 	ld d, a
 	call Function_2809_TestAccuracy
 	and a
@@ -6329,13 +6338,13 @@ Function_2759_DamageToPlayer: ; 0x2759
 	ld [wSuperEffectiveFlag], a
 
 .asm_27e2
-	ld a, [wPlayerHealth]
+	ld a, [wTempPlayerHealth]
 	cp c
 	jr z, .asm_27fd_PlayerWillBeDead
 	cp c
 	jr c, .asm_27fd_PlayerWillBeDead
 	sub c
-	ld [wPlayerHealth], a
+	ld [wTempPlayerHealth], a
 	ld a, $7
 	call Function_2870
 	ld a, [wd011]
@@ -7089,11 +7098,11 @@ Function_2c84: ; 0x2c84
 	ld a, [$c350]
 	call Function_3e6b
 	inc l
+	ld a, [wTempPlayerHealth]
+	ld [hli], a
 	ld a, [wPlayerHealth]
 	ld [hli], a
-	ld a, [wd111]
-	ld [hli], a
-	ld a, [wd112]
+	ld a, [wPlayerStrength]
 	ld [hli], a
 	ld a, [$c358]
 	cp $2
@@ -7169,7 +7178,7 @@ Function_2d28: ; 0x2d28
 	xor a
 	ld [rVBK], a
 
-	ld a, [wOpponentHealth]
+	ld a, [wTempOpponentHealth]
 	call Function_2c6b
 
 	ld a, b
@@ -7185,7 +7194,7 @@ Function_2d28: ; 0x2d28
 	ld [$9946], a
 	ld [$9d46], a
 
-	ld a, [wPlayerHealth]
+	ld a, [wTempPlayerHealth]
 	call Function_2c6b
 	ld a, b
 	add $30
@@ -7210,7 +7219,7 @@ Function_2d65: ; 0x2d65
 	ld a, [$c350]
 	call Function_3e6b
 	inc l
-	ld a, [wPlayerHealth]
+	ld a, [wTempPlayerHealth]
 	ld [hl], a
 	di
 	xor a
@@ -8964,8 +8973,8 @@ Function_380c: ; 0x380c
 	bit 1, a
 	jr z, .asm_38de
 	jp $3858
-
 .asm_38f2
+
 	push bc
 	ld a, [$c351]
 	ld [$c326], a
@@ -8975,11 +8984,13 @@ Function_380c: ; 0x380c
 	call Function_11a4_GetEncounterDataPointer
 	ld a, [hl]
 	ld [$c325], a
-	ld a, $3f
+
+	ld a, Bank(Function3f420f.asm_fc22b)
 	ld [$ff86], a
 	ld [$2666], a
-	call $422b
+	call Function3f420f.asm_fc22b
 	pop bc
+
 	ld a, [$c351]
 	ld [$c350], a
 	ld a, $5
@@ -9298,6 +9309,7 @@ Function_3ab7: ; 0x3ab7
 	ld a, [$c350]
 	cp c
 	ret nz
+
 	push bc
 	ld a, [$c351]
 	ld [$c326], a
@@ -9307,11 +9319,12 @@ Function_3ab7: ; 0x3ab7
 	call Function_11a4_GetEncounterDataPointer
 	ld a, [hl]
 	ld [$c325], a
-	ld a, $3f
+	ld a, Bank(Function3f420f)
 	ld [$ff86], a
 	ld [$2666], a
-	call $420f
+	call Function3f420f
 	pop bc
+
 	ld hl, $c400
 	ld a, [hl]
 	cp $ff
@@ -9471,10 +9484,10 @@ Function_3c36: ; 0x3c36
 	call Function_11a4_GetEncounterDataPointer
 	ld c, [hl]
 	ld b, $0
-	ld a, $10
+	ld a, Bank(Data104000)
 	ld [$ff86], a
 	ld [$2666], a
-	ld hl, Data24000
+	ld hl, Data104000
 	add hl, bc
 	ld e, [hl]
 	ld hl, $4065

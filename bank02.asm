@@ -201,6 +201,7 @@ db $00, $FF, $08, $04, "fly     vol     fliegen volo    volar   " ; 0xbc
 db $00, $FF, $10, $08, "fly     vol     fliegen volo    volar   " ; 0xbd
 db $00, $FF, $18, $0C, "fly     vol     fliegen volo    volar   " ; 0xbe
 db $00, $FF, $1E, $0F, "fly     vol     fliegen volo    volar   " ; 0xbf
+
 db $00, $40, $02, $00, "burrow  creuser graben  tana    guarida " ; 0xc0
 db $00, $40, $05, $00, "burrow  creuser graben  tana    guarida " ; 0xc1
 db $00, $40, $07, $00, "burrow  creuser graben  tana    guarida " ; 0xc2

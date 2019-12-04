@@ -6,6 +6,7 @@ INCLUDE "enum.asm"
 INCLUDE "hram.asm"
 INCLUDE "macros.asm"
 INCLUDE "charmap.asm"
+INCLUDE "encounter_constants.asm"
 
 
 ;MaxLevelNr   EQU 8*8
@@ -68,8 +69,9 @@ SECTION "banke", ROMX, BANK[$e]
 INCBIN "baserom.gb", $4000*$e+$0, $4000-$0
 SECTION "bankf", ROMX, BANK[$f]
 INCBIN "baserom.gb", $4000*$f+$0, $4000-$0
-SECTION "bank10", ROMX, BANK[$10]
-INCBIN "baserom.gb", $4000*$10+$0, $4000-$0
+
+INCLUDE "bank10.asm"
+
 SECTION "bank11", ROMX, BANK[$11]
 INCBIN "baserom.gb", $4000*$11+$0, $4000-$0
 SECTION "bank12", ROMX, BANK[$12]
@@ -127,10 +129,10 @@ SECTION "bank2b", ROMX, BANK[$2b]
 INCBIN "baserom.gb", $4000*$2b+$0, $4000-$0
 SECTION "bank2c", ROMX, BANK[$2c]
 INCBIN "baserom.gb", $4000*$2c+$0, $4000-$0
-SECTION "bank2d", ROMX, BANK[$2d]
-INCBIN "baserom.gb", $4000*$2d+$0, $4000-$0
-SECTION "bank2e", ROMX, BANK[$2e]
-INCBIN "baserom.gb", $4000*$2e+$0, $4000-$0
+
+INCLUDE "bank2d.asm"
+INCLUDE "bank2e.asm"
+
 SECTION "bank2f", ROMX, BANK[$2f]
 INCBIN "baserom.gb", $4000*$2f+$0, $4000-$0
 SECTION "bank30", ROMX, BANK[$30]
